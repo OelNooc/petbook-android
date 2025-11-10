@@ -5,9 +5,9 @@ import com.oelnooc.petbook.data.remote.PetDto
 import com.oelnooc.petbook.data.remote.PetRequestDto
 import com.oelnooc.petbook.data.remote.RetrofitInstance
 
-class PetRepository {
+class PetRepository(
     private val api: ApiService = RetrofitInstance.api
-
+) {
     suspend fun getPets(): Result<List<PetDto>> {
         return try {
             val response = api.getPets()

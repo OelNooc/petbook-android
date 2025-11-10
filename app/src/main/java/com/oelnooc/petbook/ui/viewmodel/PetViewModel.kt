@@ -6,13 +6,17 @@ import com.oelnooc.petbook.data.remote.PetRequestDto
 import com.oelnooc.petbook.data.repository.PetRepository
 import com.oelnooc.petbook.data.repository.Result
 import com.oelnooc.petbook.domain.model.Pet
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PetViewModel : ViewModel() {
-    private val repository = PetRepository()
+class PetViewModel(
+    private val repository: PetRepository = PetRepository(),
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Main
+) : ViewModel() {
 
     private val _pets = MutableStateFlow<List<Pet>>(emptyList())
     val pets: StateFlow<List<Pet>> = _pets.asStateFlow()
@@ -31,7 +35,7 @@ class PetViewModel : ViewModel() {
     }
 
     fun loadPets() {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcher) {
             _isLoading.value = true
             _errorMessage.value = null
 
@@ -56,7 +60,7 @@ class PetViewModel : ViewModel() {
     }
 
     fun getPetById(id: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcher) {
             _isLoading.value = true
             _errorMessage.value = null
             _selectedPet.value = null
@@ -84,7 +88,7 @@ class PetViewModel : ViewModel() {
     }
 
     fun addPet(name: String, type: String, age: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcher) {
             _isLoading.value = true
             _errorMessage.value = null
 

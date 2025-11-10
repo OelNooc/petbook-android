@@ -98,7 +98,7 @@ fun AddPetScreen(
                 label = { Text("Edad") },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                isError = age.toIntOrNull() == null || age.toInt() <= 0
+                isError = age.toIntOrNull() == null || age.toInt() < 0
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -106,7 +106,7 @@ fun AddPetScreen(
             Button(
                 onClick = {
                     val ageInt = age.toIntOrNull()
-                    if (name.isNotEmpty() && type.isNotEmpty() && ageInt != null && ageInt > 0) {
+                    if (name.isNotEmpty() && type.isNotEmpty() && ageInt != null && ageInt >= 0) {
                         viewModel.addPet(name, type, ageInt)
                         showConfirmation = true
                     }
@@ -115,7 +115,7 @@ fun AddPetScreen(
                     .fillMaxWidth()
                     .height(56.dp),
                 enabled = !isLoading && name.isNotEmpty() && type.isNotEmpty() &&
-                        age.toIntOrNull() != null && age.toInt() > 0
+                        age.toIntOrNull() != null && age.toInt() >= 0
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(

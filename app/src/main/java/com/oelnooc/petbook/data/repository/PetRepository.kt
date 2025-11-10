@@ -12,12 +12,12 @@ class PetRepository {
         return try {
             val response = api.getPets()
             if (response.isSuccessful) {
-                Result.success(response.body() ?: emptyList())
+                Result.Success(response.body() ?: emptyList())
             } else {
-                Result.failure(Exception("Error: ${response.code()}"))
+                Result.Failure(Exception("Error: ${response.code()}"))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.Failure(e)
         }
     }
 
@@ -25,12 +25,12 @@ class PetRepository {
         return try {
             val response = api.createPet(pet)
             if (response.isSuccessful) {
-                Result.success(response.body()!!)
+                Result.Success(response.body()!!)
             } else {
-                Result.failure(Exception("Error: ${response.code()}"))
+                Result.Failure(Exception("Error: ${response.code()}"))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.Failure(e)
         }
     }
 }

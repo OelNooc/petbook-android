@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.oelnooc.petbook"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.oelnooc.petbook"

@@ -21,6 +21,19 @@ class PetRepository {
         }
     }
 
+    suspend fun getPetById(id: Int): Result<PetDto> {
+        return try {
+            val response = api.getPet(id)
+            if (response.isSuccessful) {
+                Result.Success(response.body()!!)
+            } else {
+                Result.Failure(Exception("Error: ${response.code()} - Mascota no encontrada"))
+            }
+        } catch (e: Exception) {
+            Result.Failure(e)
+        }
+    }
+
     suspend fun createPet(pet: PetRequestDto): Result<PetDto> {
         return try {
             val response = api.createPet(pet)

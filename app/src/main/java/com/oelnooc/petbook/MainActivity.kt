@@ -3,45 +3,63 @@ package com.oelnooc.petbook
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.oelnooc.petbook.ui.theme.PetbookTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.oelnooc.petbook.ui.screens.AddPetScreen
+import com.oelnooc.petbook.ui.screens.PetDetailScreen
+import com.oelnooc.petbook.ui.screens.PetListScreen
+import com.oelnooc.petbook.ui.viewmodel.PetViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            PetbookTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+            MaterialTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    val navController = rememberNavController()
+                    val petViewModel: PetViewModel = viewModel()
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = "petList"
+                    ) {
+                        composable("petList") {
+                            PetListScreen(
+                                viewModel = petViewModel,
+                                onPetClick = { petId ->
+                                    navController.navigate("petDetail/$petId")
+                                },
+                                onAddPetClick = {
+                                    navController.navigate("addPet")
+                                }
+                            )
+                        }
+                        composable("addPet") {
+                            AddPetScreen(
+                                viewModel = petViewModel,
+                                onBack = { navController.popBackStack() }
+                            )
+                        }
+                        composable("petDetail/{petId}") { backStackEntry ->
+                            val petId = backStackEntry.arguments?.getString("petId")?.toIntOrNull() ?: 0
+                            PetDetailScreen(
+                                petId = petId,
+                                viewModel = petViewModel,
+                                onBack = { navController.popBackStack() }
+                            )
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PetbookTheme {
-        Greeting("Android")
     }
 }

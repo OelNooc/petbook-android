@@ -17,6 +17,9 @@ class PetViewModel : ViewModel() {
     private val _pets = MutableStateFlow<List<Pet>>(emptyList())
     val pets: StateFlow<List<Pet>> = _pets.asStateFlow()
 
+    private val _selectedPet = MutableStateFlow<Pet?>(null)
+    val selectedPet: StateFlow<Pet?> = _selectedPet.asStateFlow()
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
@@ -50,6 +53,34 @@ class PetViewModel : ViewModel() {
 
             _isLoading.value = false
         }
+    }
+
+    fun getPetById(id: Int) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _errorMessage.value = null
+            _selectedPet.value = null
+
+            when (val result = repository.getPetById(id)) {
+                is Result.Success -> {
+                    _selectedPet.value = Pet(
+                        id = result.data.id,
+                        name = result.data.name,
+                        type = result.data.type,
+                        age = result.data.age
+                    )
+                }
+                is Result.Failure -> {
+                    _errorMessage.value = result.exception.message
+                }
+            }
+
+            _isLoading.value = false
+        }
+    }
+
+    fun clearSelectedPet() {
+        _selectedPet.value = null
     }
 
     fun addPet(name: String, type: String, age: Int) {
